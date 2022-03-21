@@ -9,6 +9,7 @@ from .views import (
     # todo_update,
     # todo_delete,
     TodoList,
+    TodoDetail,
 )
 
 
@@ -21,5 +22,6 @@ urlpatterns = [
     # path("todo_detail/<int:pk>/", todo_detail),
     # path("todo_update/<int:pk>/", todo_update),
     # path("todo_delete/<int:pk>/", todo_delete),
-    path("todo_detail/<int:pk>/", todo_detail),
+    #path("todo_detail/<int:pk>/", todo_detail),
+    path("todo_detail/<int:pk>/", TodoDetail.as_view()),
 ]
