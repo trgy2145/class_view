@@ -7,12 +7,13 @@ from rest_framework import serializers
 from .models import Todo
 from .serializers import TodoSerializer
 
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes,action
 from rest_framework.response import Response
 
 from rest_framework import status
 from rest_framework.views import APIView
-
+from rest_framework.generics import GenericAPIView,mixins,ListCreateAPIView,RetrieveUpdateDestroyAPIView
+from rest_framework.viewsets import ModelViewSet
 # Create your views here.
 def home(request):
     return HttpResponse(
@@ -137,3 +138,44 @@ class TodoDetail(APIView):
             "message" : "todo succesfully deleted"
         }
         return Response(data,status=status.HTTP_204_NO_CONTENT)
+
+########### genericAPI View  #################
+class TodoListCreate(mixins.ListModelMixin, mixins.CreateModelMixin,GenericAPIView):
+    queryset = Todo.objects.all()
+    serializer_class = TodoSerializer
+
+    def list(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+############ GENERİC VİEW ################
+class TodoGenListCreate(ListCreateAPIView):
+    queryset = Todo.objects.all()
+    serializer_class = TodoSerializer
+
+class TodoGenGetUpdateDelete(RetrieveUpdateDestroyAPIView):
+    queryset = Todo.objects.all()
+    serializer_class = TodoSerializer
+
+
+############ VİEWSet ################
+
+class TodoMVS(ModelViewSet):
+    queryset = Todo.objects.all()
+    serializer_class = TodoSerializer
+
+    @action(methods=["GET"], detail=False)
+    def todo_count(self,request):
+        todo_count = Todo.objects.filter(done=False).count()
+        count ={
+            'undo-todos':todo_count
+        }
+        return Response(count)
+
+    
+
+
+    
+
